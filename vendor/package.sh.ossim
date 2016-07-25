@@ -1,0 +1,123 @@
+########## dependencies
+# cmake
+sudo apt-get -y install cmake
+
+# g++
+sudo apt-get -y install g++
+
+# git
+sudo apt-get -y install git
+
+# java
+sudo apt-get -y install openjdk-7-jdk
+echo "export JAVA_HOME=/usr" >> ~/.bashrc
+
+# libgeos++-dev
+sudo apt-get -y install libgeos++-dev
+
+# libgeos-dev
+sudo apt-get -y install libgeos-dev
+
+# libgeotiff-dev
+sudo apt-get -y install libgeotiff-dev
+
+# openthreads-dev
+sudo apt-get -y install libopenthreads-dev
+
+# unzip
+sudo apt-get -y install unzip
+
+
+########## environment variables
+export OSSIM_DEV_HOME=$HOME/ossimlabs
+echo 'export OSSIM_DEV_HOME=$HOME/ossimlabs' >> ~/.bashrc
+
+export OSSIM_BUILD_DIR=$HOME/build
+echo 'export OSSIM_BUILD_DIR=$HOME/build' >> ~/.bashrc
+
+export OSSIM_INSTALL_PREFIX=$HOME/ossim_sandbox
+echo 'export OSSIM_INSTALL_PREFIX=$HOME/ossim_sandbox' >> ~/.bashrc
+
+export LD_LIBRARY_PATH=$OSSIM_INSTALL_PREFIX/lib
+echo 'export LD_LIBRARY_PATH=$OSSIM_INSTALL_PREFIX/lib' >> ~/.bashrc
+
+export PATH=$PATH:$OSSIM_INSTALL_PREFIX/bin
+echo 'export PATH=$PATH:$OSSIM_INSTALL_PREFIX/bin' >> ~/.bashrc
+
+export OSSIM_PREFS_FILE=$OSSIM_INSTALL_PREFIX/ossim.config
+echo 'export OSSIM_PREFS_FILE=$OSSIM_INSTALL_PREFIX/ossim.config' >> ~/.bashrc
+
+export OSSIM_MAKE_JOBS=2
+echo 'export OSSIM_MAKE_JOBS=2' >> ~/.bashrc
+	
+# kakdu
+export BUILD_KAKADU_PLUGIN=OFF
+echo 'export BUILD_KAKADU_PLUGIN=ON' >> ~/.bashrc
+export KAKADU_ROOT_SRC=$OSSIM_DEV_HOME/kakadu/latest
+echo 'export KAKADU_ROOT_SRC=$OSSIM_DEV_HOME/kakadu/latest' >> ~/.bashrc
+export KAKADU_AUX_LIBRARY=$KAKADU_ROOT_SRC/lib/Linux-x86-64-gcc/libkdu_aux.a
+echo 'export KAKADU_AUX_LIBRARY=$KAKADU_ROOT_SRC/lib/Linux-x86-64-gcc/libkdu_aux.a' >> ~/.bashrc
+export KAKADU_LIBRARY=$KAKADU_ROOT_SRC/lib/Linux-x86-64-gcc/libkdu.a
+echo 'export KAKADU_LIBRARY=$KAKADU_ROOT_SRC/lib/Linux-x86-64-gcc/libkdu.a' >> ~/.bashrc
+		
+# potrace
+export BUILD_POTRACE_PLUGIN=ON
+echo 'export BUILD_POTRACE_PLUGIN=ON' >> ~/.bashrc
+
+export OSSIM_POTRACE_PLUGIN=ON
+echo 'OSSIM_POTRACE_PLUGIN=ON' >> ~/.bashrc
+
+########## build
+mkdir ossimlabs
+pushd ossimlabs
+
+	# kakadu
+	#KAKADU_VERSION="v7_7_1-01123C"
+	#mkdir kakadu
+	#pushd kakadu
+	#	git init
+	#	git config core.sparseCheckout true
+	#	echo "kakadu/$KAKADU_VERSION/" > .git/info/sparse-checkout
+	#	git remote add origin https://knaquin:foothill1553@github.com/radiantbluetechnologies/ossim-private
+	#	git pull --depth 1 origin master
+	#	mv ./kakadu/* .
+	#	rmdir kakadu
+	#	ln -s $KAKADU_VERSION latest
+	#popd
+
+	# ossim
+	git clone https://github.com/ossimlabs/ossim.git -b dev --single-branch
+
+	# ossim-plugins
+	git clone https://github.com/ossimlabs/ossim-plugins.git -b dev --single-branch
+
+	pushd ossim/scripts
+		./build.sh
+		./install.sh
+	popd
+
+
+	########## package
+	# ossim prefs file
+	pushd $OSSIM_INSTALL_PREFIX
+		cp /vagrant/ossim.config .
+	popd
+
+
+
+	pushd $OSSIM_INSTALL_PREFIX/lib
+		cp /usr/lib/libgeos-3.4.2.so .
+		cp /usr/lib/libgeotiff.so.2 .
+		cp /usr/lib/libOpenThreads.so.14 .
+		cp /usr/lib/libproj.so.0 .
+	popd
+
+popd
+
+mv ossim_sandbox install
+
+tar -zcvf ossim.tar.gz install
+
+mv install ossim_sandbox
+
+mv -f ossim.tar.gz /vagrant
