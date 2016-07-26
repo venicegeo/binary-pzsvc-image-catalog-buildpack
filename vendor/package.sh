@@ -19,6 +19,8 @@ cd pzsvc-image-catalog
 git checkout filter
 go get ./...
 go build
-tar -zcvf pzsvc-image-catalog.tar.gz pzsvc-image-catalog
+mkdir lib
+cp /usr/lib/libgeos* lib
+tar -zcvf pzsvc-image-catalog.tar.gz pzsvc-image-catalog lib
 mv pzsvc-image-catalog.tar.gz /vagrant
 
