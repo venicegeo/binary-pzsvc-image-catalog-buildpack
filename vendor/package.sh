@@ -16,7 +16,6 @@ mkdir venicegeo
 cd venicegeo
 git clone https://github.com/venicegeo/pzsvc-image-catalog.git
 cd pzsvc-image-catalog
-git checkout filter
 go get ./...
 go build
 mkdir lib
