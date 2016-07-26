@@ -1,0 +1,21 @@
+#!/bin/bash
+
+set -eo pipefail
+
+#YELLOW='\033[1;33m'
+#NC='\033[0m' # No Color
+
+mkdir -p "$1" "$2"
+build=$(cd "$1/" && pwd)
+cache=$(cd "$2/" && pwd)
+buildpack=$(cd "$(dirname $0)/.." && pwd)
+
+step() {
+    echo "$steptxt $@"
+}
+
+# Add binary and libraries to path
+step "Adding GEOS support"
+tar xzf $buildpack/vendor/pzsvc-image-catalog.tar.gz -C $build/
+
+exit 0
