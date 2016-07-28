@@ -16,6 +16,6 @@ step() {
 
 # Add binary and libraries to path
 step "Adding GEOS support"
-tar xzf $buildpack/vendor/pzsvc-image-catalog.tar.gz -C $build/
+tar xzf $buildpack/vendor/geos.tar.gz -C $build/
 
 exit 0
